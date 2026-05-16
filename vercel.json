@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npx --yes npm@10.9.4 ci --no-audit --no-fund",
-  "buildCommand": "npm run build",
+  "installCommand": "corepack enable && corepack pnpm install --frozen-lockfile",
+  "buildCommand": "corepack pnpm run build",
   "outputDirectory": "dist"
 }
