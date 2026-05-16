@@ -1,0 +1,6 @@
+[
+  { "level": 1, "name": "On-call Engineer", "role": "First responder", "contact": "PagerDuty: primary-oncall", "responseTime": "5 min" },
+  { "level": 2, "name": "Tech Lead", "role": "Architecture & code-level decisions", "contact": "Slack: @priya / +1 555 0103", "responseTime": "15 min" },
+  { "level": 3, "name": "Engineering Manager", "role": "Cross-team coordination", "contact": "Slack: @aiko / +1 555 0107", "responseTime": "30 min" },
+  { "level": 4, "name": "Director of Engineering", "role": "Org-wide escalation", "contact": "Email: eng-leadership@example.com", "responseTime": "1 hour" }
+]

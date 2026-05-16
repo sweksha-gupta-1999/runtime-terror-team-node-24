@@ -1,0 +1,26 @@
+[
+  {
+    "id": "rec-001",
+    "title": "Start with the architecture diagram",
+    "reason": "You're on day 1 and this gives the fastest mental model.",
+    "icon": "Workflow"
+  },
+  {
+    "id": "rec-002",
+    "title": "Trace one request end-to-end",
+    "reason": "Builds confidence faster than reading every file.",
+    "icon": "GitBranch"
+  },
+  {
+    "id": "rec-003",
+    "title": "Meet 3 SMEs this week",
+    "reason": "Low-cost, high-leverage. People > pages.",
+    "icon": "Users"
+  },
+  {
+    "id": "rec-004",
+    "title": "Ship a 10-line PR",
+    "reason": "The fastest way to learn the review and deploy loop.",
+    "icon": "Rocket"
+  }
+]

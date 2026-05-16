@@ -1,0 +1,162 @@
+{
+  "overview": {
+    "summary": "{{REPO_NAME}} is a {{LEVEL}}-friendly service in the platform. This onboarding artifact walks you from zero to confident contributor.",
+    "purpose": "Provide a reliable, observable, and secure surface area for downstream consumers while keeping developer ergonomics high.",
+    "keyFeatures": [
+      "Modular service architecture with clean boundaries",
+      "First-class observability: metrics, tracing, structured logs",
+      "Idempotent, retry-safe public APIs",
+      "Comprehensive automated test coverage (unit, integration, e2e)",
+      "GitOps-style deployment with progressive rollouts"
+    ]
+  },
+  "architecture": {
+    "description": "Requests enter through an API Gateway, are authenticated against the Identity service, then routed to domain services. State lives in a Postgres primary with Redis for hot caches; async work goes through an event bus.",
+    "nodes": [
+      { "id": "client", "label": "Client / SPA", "kind": "client", "x": 80, "y": 60 },
+      { "id": "gateway", "label": "API Gateway", "kind": "gateway", "x": 280, "y": 60 },
+      { "id": "identity", "label": "Identity", "kind": "service", "x": 280, "y": 200 },
+      { "id": "core", "label": "{{REPO_NAME}}", "kind": "service", "x": 500, "y": 60 },
+      { "id": "queue", "label": "Event Bus", "kind": "queue", "x": 500, "y": 200 },
+      { "id": "cache", "label": "Redis", "kind": "cache", "x": 720, "y": 60 },
+      { "id": "db", "label": "PostgreSQL", "kind": "db", "x": 720, "y": 200 },
+      { "id": "external", "label": "3rd-party APIs", "kind": "external", "x": 720, "y": 340 }
+    ],
+    "edges": [
+      { "from": "client", "to": "gateway", "label": "HTTPS" },
+      { "from": "gateway", "to": "identity", "label": "verify" },
+      { "from": "gateway", "to": "core", "label": "route" },
+      { "from": "core", "to": "cache", "label": "hot reads" },
+      { "from": "core", "to": "db", "label": "persist" },
+      { "from": "core", "to": "queue", "label": "publish" },
+      { "from": "queue", "to": "external", "label": "deliver" }
+    ]
+  },
+  "folderStructure": {
+    "name": "{{REPO_NAME}}",
+    "type": "folder",
+    "children": [
+      {
+        "name": "src",
+        "type": "folder",
+        "description": "Application source code.",
+        "children": [
+          { "name": "api", "type": "folder", "description": "HTTP route handlers and controllers." },
+          { "name": "domain", "type": "folder", "description": "Core business logic & entities." },
+          { "name": "infrastructure", "type": "folder", "description": "DB, cache, queues, external clients." },
+          { "name": "config", "type": "folder", "description": "Environment & feature flag configuration." },
+          { "name": "utils", "type": "folder", "description": "Shared helpers & guards." },
+          { "name": "index.ts", "type": "file", "description": "Application entry point." }
+        ]
+      },
+      {
+        "name": "tests",
+        "type": "folder",
+        "description": "Automated tests.",
+        "children": [
+          { "name": "unit", "type": "folder" },
+          { "name": "integration", "type": "folder" },
+          { "name": "e2e", "type": "folder" }
+        ]
+      },
+      {
+        "name": "scripts",
+        "type": "folder",
+        "description": "Local dev & CI helper scripts."
+      },
+      { "name": ".env.example", "type": "file", "description": "Sample environment variables." },
+      { "name": "Dockerfile", "type": "file" },
+      { "name": "README.md", "type": "file" },
+      { "name": "package.json", "type": "file" }
+    ]
+  },
+  "apiFlow": [
+    { "method": "GET", "path": "/v1/health", "description": "Liveness probe used by k8s.", "auth": false },
+    { "method": "POST", "path": "/v1/sessions", "description": "Create an authenticated session.", "auth": false },
+    { "method": "GET", "path": "/v1/resources/:id", "description": "Fetch a resource by id.", "auth": true },
+    { "method": "POST", "path": "/v1/resources", "description": "Create a new resource (idempotent).", "auth": true },
+    { "method": "PATCH", "path": "/v1/resources/:id", "description": "Partially update a resource.", "auth": true },
+    { "method": "DELETE", "path": "/v1/resources/:id", "description": "Soft-delete a resource.", "auth": true }
+  ],
+  "envSetup": [
+    { "key": "NODE_ENV", "example": "development", "required": true, "description": "Runtime environment." },
+    { "key": "PORT", "example": "8080", "required": true, "description": "HTTP port to listen on." },
+    { "key": "DATABASE_URL", "example": "postgres://user:pass@localhost:5432/app", "required": true, "description": "Primary Postgres connection string." },
+    { "key": "REDIS_URL", "example": "redis://localhost:6379", "required": true, "description": "Redis connection string used for caches." },
+    { "key": "JWT_PUBLIC_KEY", "example": "-----BEGIN PUBLIC KEY-----...", "required": true, "description": "Public key used to verify Identity-issued JWTs." },
+    { "key": "FEATURE_NEW_PIPELINE", "example": "false", "required": false, "description": "Feature flag to enable new processing pipeline." }
+  ],
+  "buildCommands": [
+    { "label": "Install dependencies", "command": "npm install", "description": "Installs all runtime and dev dependencies." },
+    { "label": "Run locally", "command": "npm run dev", "description": "Starts the dev server with hot reload." },
+    { "label": "Run tests", "command": "npm test", "description": "Executes the full automated test suite." },
+    { "label": "Lint & type-check", "command": "npm run check", "description": "Runs lint, format and typecheck in one go." },
+    { "label": "Production build", "command": "npm run build", "description": "Creates a production-ready bundle." }
+  ],
+  "deployment": [
+    { "stage": "Build", "description": "CI builds an immutable container image and signs the SBOM.", "tool": "GitHub Actions" },
+    { "stage": "Scan", "description": "Static analysis + dependency scan + secret scan.", "tool": "CodeQL + Trivy" },
+    { "stage": "Stage", "description": "Auto-deploy to staging cluster on merge to main.", "tool": "Argo CD" },
+    { "stage": "Canary", "description": "5% traffic shift with SLO-based auto-rollback.", "tool": "Argo Rollouts" },
+    { "stage": "Production", "description": "Promoted on green canary metrics.", "tool": "Argo CD" }
+  ],
+  "commonIssues": [
+    { "title": "Port already in use", "symptom": "EADDRINUSE on startup.", "resolution": "Kill the previous process: `lsof -i :8080 | xargs kill -9` or change PORT.", "severity": "low" },
+    { "title": "JWT verification failing", "symptom": "401 on every authenticated route.", "resolution": "Ensure JWT_PUBLIC_KEY matches the active Identity signing key. Pull latest from secrets manager.", "severity": "high" },
+    { "title": "Slow DB queries", "symptom": "p99 latency spikes on /v1/resources.", "resolution": "Run `EXPLAIN ANALYZE` on the failing query; check that index on (tenant_id, created_at) exists.", "severity": "medium" },
+    { "title": "Redis connection refused", "symptom": "Repeated connection errors in logs.", "resolution": "Verify REDIS_URL and that the sidecar is healthy via `kubectl describe pod`.", "severity": "medium" }
+  ],
+  "faqs": [
+    { "q": "Where do I start as a new joiner?", "a": "Pair with your buddy, run the service locally, then pick an issue tagged ‘good first issue’." },
+    { "q": "How do I get DB access?", "a": "Request short-lived credentials via the Vault Identity self-serve portal." },
+    { "q": "Which tests are required before merging?", "a": "Unit + integration must pass. E2E runs nightly and on release branches." },
+    { "q": "How do I propose an architecture change?", "a": "Open an RFC in the docs repo and tag the platform leads for review." },
+    { "q": "Who do I contact for prod incidents?", "a": "Use the on-call rotation in PagerDuty; the escalation matrix is in the Team page." }
+  ],
+  "contacts": [
+    { "id": "c-001", "name": "Priya Mehta", "role": "Tech Lead", "team": "Platform", "email": "priya.mehta@example.com", "slack": "@priya", "avatar": "#6366f1", "timezone": "Asia/Kolkata", "expertise": ["architecture", "kubernetes", "go"] },
+    { "id": "c-002", "name": "Marco Bianchi", "role": "Senior SME", "team": "Backend", "email": "marco.bianchi@example.com", "slack": "@marco", "avatar": "#06b6d4", "timezone": "Europe/Rome", "expertise": ["api design", "postgres", "performance"] },
+    { "id": "c-003", "name": "Aiko Tanaka", "role": "Engineering Manager", "team": "Platform", "email": "aiko.tanaka@example.com", "slack": "@aiko", "avatar": "#a855f7", "timezone": "Asia/Tokyo", "expertise": ["roadmap", "incident management"] },
+    { "id": "c-004", "name": "Devon Carter", "role": "DevOps SME", "team": "Infra", "email": "devon.carter@example.com", "slack": "@devon", "avatar": "#10b981", "timezone": "America/New_York", "expertise": ["k8s", "argo", "ci/cd"] }
+  ],
+  "codeWalkthrough": [
+    {
+      "title": "App entry point",
+      "file": "src/index.ts",
+      "language": "ts",
+      "snippet": "import { createServer } from './api/server';\nimport { loadConfig } from './config';\n\nasync function main() {\n  const config = await loadConfig();\n  const server = await createServer(config);\n  server.listen(config.port, () => {\n    console.log(`listening on :${config.port}`);\n  });\n}\n\nmain().catch((err) => {\n  console.error('fatal', err);\n  process.exit(1);\n});",
+      "explanation": "We load config first (env + secrets), construct the HTTP server with all dependencies wired, and start listening. Fatal errors crash fast so the orchestrator can restart us cleanly."
+    },
+    {
+      "title": "Domain entity",
+      "file": "src/domain/resource.ts",
+      "language": "ts",
+      "snippet": "export class Resource {\n  constructor(\n    public readonly id: string,\n    public readonly tenantId: string,\n    public name: string,\n    public createdAt: Date\n  ) {}\n\n  rename(next: string) {\n    if (!next.trim()) throw new Error('name required');\n    this.name = next.trim();\n  }\n}",
+      "explanation": "Plain-old class that captures invariants and behavior. No framework imports here — that’s on purpose so we can unit-test it in isolation."
+    },
+    {
+      "title": "Route handler",
+      "file": "src/api/routes/resources.ts",
+      "language": "ts",
+      "snippet": "router.post('/v1/resources', auth, async (req, res) => {\n  const dto = createResourceSchema.parse(req.body);\n  const resource = await resourceService.create(dto, req.user);\n  res.status(201).json(resource);\n});",
+      "explanation": "Validation, authz, service call, response. Notice we never reach into the DB from here — controllers stay thin."
+    }
+  ],
+  "glossary": [
+    { "term": "Idempotent", "definition": "An operation that produces the same result if executed multiple times with the same input." },
+    { "term": "Canary deploy", "definition": "Rolling a new version to a small slice of traffic and watching SLOs before going wider." },
+    { "term": "SLO", "definition": "Service Level Objective — the reliability target we commit to (e.g. 99.9% successful requests)." },
+    { "term": "RFC", "definition": "Request For Comments — a written proposal inviting feedback before implementation." },
+    { "term": "GitOps", "definition": "Operational model where Git is the source of truth for desired infra state." }
+  ],
+  "learningPath": [
+    { "id": "lp-1", "title": "Get the repo running locally", "description": "Clone, install, set up .env, run `npm run dev`, and hit /v1/health.", "estMinutes": 30, "category": "setup" },
+    { "id": "lp-2", "title": "Read the architecture diagram", "description": "Understand request flow, data ownership, and async boundaries.", "estMinutes": 20, "category": "architecture" },
+    { "id": "lp-3", "title": "Tour the folder structure", "description": "Open each top-level folder; map intent to code.", "estMinutes": 25, "category": "codebase" },
+    { "id": "lp-4", "title": "Follow one request end-to-end", "description": "Pick GET /v1/resources/:id and trace it from controller to DB.", "estMinutes": 40, "category": "codebase" },
+    { "id": "lp-5", "title": "Run the test suite", "description": "Unit + integration. Add a failing test, watch it fail, then fix.", "estMinutes": 35, "category": "process" },
+    { "id": "lp-6", "title": "Read the on-call runbook", "description": "Know what to do at 3am: dashboards, runbooks, escalation.", "estMinutes": 20, "category": "process" },
+    { "id": "lp-7", "title": "Meet your SMEs", "description": "15-min intros with Tech Lead, Backend SME, and DevOps SME.", "estMinutes": 45, "category": "people" },
+    { "id": "lp-8", "title": "Ship a tiny PR", "description": "Pick a ‘good first issue’ label, open a PR, get a review.", "estMinutes": 90, "category": "process" }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "default": {
+    "buildStability": 92,
+    "prActivity": 78,
+    "deploymentFrequency": 9,
+    "openIssues": 41,
+    "techDebtScore": 28,
+    "weekly": [
+      { "week": "W-12", "builds": 41, "prs": 18, "deployments": 8 },
+      { "week": "W-11", "builds": 39, "prs": 22, "deployments": 10 },
+      { "week": "W-10", "builds": 46, "prs": 19, "deployments": 7 },
+      { "week": "W-9", "builds": 50, "prs": 25, "deployments": 12 },
+      { "week": "W-8", "builds": 48, "prs": 27, "deployments": 11 },
+      { "week": "W-7", "builds": 44, "prs": 30, "deployments": 9 },
+      { "week": "W-6", "builds": 52, "prs": 26, "deployments": 13 },
+      { "week": "W-5", "builds": 49, "prs": 31, "deployments": 10 },
+      { "week": "W-4", "builds": 55, "prs": 28, "deployments": 14 },
+      { "week": "W-3", "builds": 58, "prs": 33, "deployments": 12 },
+      { "week": "W-2", "builds": 53, "prs": 35, "deployments": 11 },
+      { "week": "W-1", "builds": 60, "prs": 37, "deployments": 13 }
+    ],
+    "languageMix": [
+      { "name": "TypeScript", "value": 58 },
+      { "name": "Go", "value": 22 },
+      { "name": "Python", "value": 12 },
+      { "name": "Other", "value": 8 }
+    ],
+    "incidentTrend": [
+      { "month": "Dec", "sev1": 0, "sev2": 1 },
+      { "month": "Jan", "sev1": 1, "sev2": 2 },
+      { "month": "Feb", "sev1": 0, "sev2": 1 },
+      { "month": "Mar", "sev1": 0, "sev2": 0 },
+      { "month": "Apr", "sev1": 1, "sev2": 1 },
+      { "month": "May", "sev1": 0, "sev2": 1 }
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "kb-001",
+    "title": "Engineering Onboarding Checklist",
+    "summary": "What to expect in your first 2 weeks: access, learning, shipping your first PR.",
+    "body": "Week 1: access & local setup, read top 5 ADRs, shadow standups. Week 2: trace one feature end-to-end, ship a small PR, attend an incident review. Buddy will check in twice a week.",
+    "tags": ["onboarding", "process", "beginner"],
+    "updatedAt": "2026-05-08",
+    "category": "Process",
+    "author": "People Ops"
+  },
+  {
+    "id": "kb-002",
+    "title": "ADR-027: Multi-tenant data isolation",
+    "summary": "Why we picked row-level security over per-tenant schemas.",
+    "body": "Row-level security in Postgres gives us tenant isolation without an explosion of schemas. We accept the performance trade-off in exchange for operational simplicity.",
+    "tags": ["architecture", "postgres", "security"],
+    "updatedAt": "2026-04-21",
+    "category": "Architecture",
+    "author": "Priya Mehta"
+  },
+  {
+    "id": "kb-003",
+    "title": "Secrets & Credentials",
+    "summary": "How to request, rotate, and revoke credentials safely.",
+    "body": "All secrets live in Vault. Request access via the self-serve portal. Rotations happen automatically every 30 days. Never commit secrets — pre-commit hooks block known patterns.",
+    "tags": ["security", "secrets", "vault"],
+    "updatedAt": "2026-05-02",
+    "category": "Security",
+    "author": "Security Team"
+  },
+  {
+    "id": "kb-004",
+    "title": "Frontend Component Conventions",
+    "summary": "Naming, composition, testing patterns we follow across web apps.",
+    "body": "Use the design system primitives where possible. Components are presentational by default; data-fetching lives in hooks. Co-locate tests with components.",
+    "tags": ["frontend", "react", "conventions"],
+    "updatedAt": "2026-04-30",
+    "category": "Frontend",
+    "author": "Web Platform"
+  },
+  {
+    "id": "kb-005",
+    "title": "Incident Response Runbook",
+    "summary": "What to do when an alert fires: triage, comms, resolution, postmortem.",
+    "body": "Step 1: acknowledge in PagerDuty. Step 2: open incident channel. Step 3: page next escalation if no progress in 15m. Step 4: blameless postmortem within 5 business days.",
+    "tags": ["devops", "incident", "process"],
+    "updatedAt": "2026-05-12",
+    "category": "DevOps",
+    "author": "SRE"
+  },
+  {
+    "id": "kb-006",
+    "title": "API Design Guidelines",
+    "summary": "REST conventions, error format, versioning, idempotency.",
+    "body": "Use plural resource names. Return RFC-7807 problem+json for errors. Version in the URL (/v1/...). Mutating endpoints must accept Idempotency-Key.",
+    "tags": ["backend", "api", "rest"],
+    "updatedAt": "2026-04-18",
+    "category": "Backend",
+    "author": "Marco Bianchi"
+  },
+  {
+    "id": "kb-007",
+    "title": "Local Development Tips",
+    "summary": "Speed up your inner loop: profiles, scripts, IDE setup.",
+    "body": "Use the included `make dev-fast` target to skip integration containers. Enable EditorConfig + Prettier on save. Pre-warm node_modules with `pnpm fetch`.",
+    "tags": ["devex", "local", "tips"],
+    "updatedAt": "2026-05-10",
+    "category": "DevOps",
+    "author": "DevEx Team"
+  },
+  {
+    "id": "kb-008",
+    "title": "Performance Budget",
+    "summary": "Hard limits on bundle size, p95 latency, and DB query time.",
+    "body": "Frontend bundle: <250 KB gzipped per route. API p95: <300ms. DB queries: <50ms on hot paths. CI fails builds that regress these.",
+    "tags": ["performance", "frontend", "backend"],
+    "updatedAt": "2026-04-25",
+    "category": "Architecture",
+    "author": "Performance Guild"
+  }
+]

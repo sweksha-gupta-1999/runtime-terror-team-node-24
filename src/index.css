@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Global tokens ---------- */
+:root {
+  color-scheme: light;
+  --bg: 248 250 252; /* ink-50 */
+  --fg: 15 23 42; /* ink-900 */
+  --surface: 255 255 255;
+  --surface-2: 248 250 252;
+  --border: 226 232 240; /* ink-200 */
+  --muted: 100 116 139;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: 2 6 23; /* ink-950 */
+  --fg: 226 232 240;
+  --surface: 15 23 42; /* ink-900 */
+  --surface-2: 30 41 59; /* ink-800 */
+  --border: 30 41 59;
+  --muted: 148 163 184;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply font-sans antialiased;
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  /* Subtle ambient mesh on light + dark */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    @apply bg-mesh-light;
+    opacity: 0.7;
+  }
+  .dark body::before {
+    @apply bg-mesh-dark;
+    opacity: 0.85;
+  }
+
+  ::selection {
+    background: rgba(99, 102, 241, 0.25);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.35);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+@layer components {
+  /* Glass card surface used across the app */
+  .glass {
+    @apply backdrop-blur-xl;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(226, 232, 240, 0.7);
+  }
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+  }
+
+  .surface {
+    background-color: rgb(var(--surface));
+    border-color: rgb(var(--border));
+  }
+
+  .text-muted {
+    color: rgb(var(--muted));
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #6366f1 0%, #06b6d4 50%, #a855f7 100%);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium
+      transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-400/40 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn text-white shadow-glow;
+    background-image: linear-gradient(120deg, #4f46e5, #6366f1 55%, #06b6d4);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+  }
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-ink-100 dark:hover:bg-ink-800 text-ink-700 dark:text-ink-200;
+  }
+  .btn-outline {
+    @apply btn border border-ink-200 dark:border-ink-700 bg-white/60 dark:bg-ink-900/40 hover:bg-white dark:hover:bg-ink-800 text-ink-700 dark:text-ink-100;
+  }
+
+  .card {
+    @apply rounded-2xl border border-ink-200/70 dark:border-ink-800 bg-white/80 dark:bg-ink-900/60 shadow-card backdrop-blur-sm;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-200 dark:border-ink-700
+      bg-white/70 dark:bg-ink-900/50 px-2.5 py-0.5 text-xs font-medium text-ink-700 dark:text-ink-200;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-ink-200 dark:border-ink-700 bg-white/80 dark:bg-ink-900/60 px-3.5 py-2.5
+      text-sm text-ink-900 dark:text-ink-100 placeholder-ink-400 focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-400/15 transition;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.12) 0%,
+      rgba(148, 163, 184, 0.28) 50%,
+      rgba(148, 163, 184, 0.12) 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+
+  .divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-ink-200 dark:via-ink-700 to-transparent;
+  }
+}
+
+/* ---------- Print stylesheet (PDF export) ---------- */
+@media print {
+  body::before {
+    display: none;
+  }
+  /* Hide sidebar, topbar, footer in print */
+  aside,
+  header,
+  footer {
+    display: none !important;
+  }
+  .lg\:pl-64 {
+    padding-left: 0 !important;
+  }
+  .card,
+  .glass {
+    background: white !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+  /* Force light colors for readability */
+  body,
+  .dark body {
+    background: white !important;
+    color: #0f172a !important;
+  }
+  .shadow-glow,
+  .shadow-soft,
+  .shadow-card {
+    box-shadow: none !important;
+  }
+}
+
+/* Enhanced print stylesheet for better PDF export */
+@page {
+  size: A4;
+  margin: 20mm;
+  orphans: 3;
+  widows: 3;
+}
+
+@media print {
+  /* Hide interactive elements */
+  button,
+  [role='button'],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Better typography for print */
+  body {
+    font-size: 11pt;
+    line-height: 1.6;
+    width: 100%;
+  }
+
+  /* Page breaks and orphan/widow control */
+  h1, h2 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    margin-top: 1.2em;
+  }
+
+  h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Tab sections get their own area */
+  [role='tabpanel'] {
+    page-break-inside: avoid;
+    margin: 1.5em 0;
+  }
+
+  /* Better code block styling for print */
+  pre, code {
+    background: #f3f4f6 !important;
+    border: 1px solid #d1d5db !important;
+    page-break-inside: avoid;
+    padding: 0.5em;
+    font-size: 10pt;
+  }
+
+  /* List styling */
+  ul, ol {
+    page-break-inside: avoid;
+  }
+
+  li {
+    page-break-inside: avoid;
+    margin-bottom: 0.3em;
+  }
+
+  /* Table optimization */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 1px solid #d1d5db !important;
+    padding: 0.5em;
+    text-align: left;
+  }
+
+  th {
+    background: #f3f4f6 !important;
+    font-weight: 600;
+  }
+
+  /* Hide scrollbars and decorative elements */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* SVG optimization for print */
+  svg {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Links should be visible with underlines */
+  a {
+    color: #4f46e5 !important;
+    text-decoration: underline;
+  }
+
+  /* Remove color gradients, use solid colors */
+  .text-gradient {
+    background: none !important;
+    color: #4f46e5 !important;
+    -webkit-text-fill-color: unset !important;
+  }
+
+  /* Badge styling for print */
+  .badge, [role='status'] {
+    border: 1px solid #d1d5db !important;
+    background: white !important;
+    color: #0f172a !important;
+    page-break-inside: avoid;
+  }
+
+  /* Progress bars visible in grayscale */
+  [role='progressbar'] {
+    background: #e5e7eb !important;
+    border: 1px solid #d1d5db !important;
+  }
+
+  /* Better spacing for readability */
+  p {
+    margin: 0.75em 0;
+    line-height: 1.5;
+  }
+
+  /* Main content area */
+  main {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Remove animations and transitions */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

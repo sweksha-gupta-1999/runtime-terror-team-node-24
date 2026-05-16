@@ -1,0 +1,60 @@
+{
+  "greeting": [
+    "Hi! I'm your onboarding co-pilot. Ask me anything about this repo and I'll point you to the right place.",
+    "Hey there — welcome aboard! I can summarize files, explain flows, or suggest a learning path. What do you want to do first?"
+  ],
+  "fallback": [
+    "I don't have a confident answer yet, but here's what I'd check next:\n\n• The architecture diagram for component responsibilities.\n• The folder structure for where this concern usually lives.\n• Ping the assigned SME for a quick 10-min walkthrough.",
+    "That's a good question. Based on the repo signals I see, I'd recommend reading the on-call runbook and the recent ADRs. Want me to open the Knowledge Hub filtered to your topic?"
+  ],
+  "patterns": [
+    {
+      "match": ["summary", "summarize", "what does this repo"],
+      "responses": [
+        "Here's a quick summary I generated:\n\n• Purpose: provides a reliable surface for downstream consumers.\n• Stack: TypeScript / Node.js / PostgreSQL / Redis.\n• Boundaries: thin controllers, rich domain, infra at the edges.\n• Deploy: GitHub Actions → Argo CD with canary rollouts.\n\nWant me to drill into any of these?"
+      ]
+    },
+    {
+      "match": ["auth", "authentication", "jwt", "login"],
+      "responses": [
+        "Authentication flow:\n\n1. Client hits the API Gateway over HTTPS.\n2. Gateway verifies the JWT against the Identity service's public key.\n3. Verified user context is forwarded to the downstream service as signed headers.\n4. Per-route authorization is checked in the controller middleware.\n\nThe JWT_PUBLIC_KEY env var must match the current signing key — that's the #1 source of 401s here."
+      ]
+    },
+    {
+      "match": ["deploy", "deployment", "release", "ci"],
+      "responses": [
+        "Deployment pipeline:\n\n• Build & sign image in CI (GitHub Actions).\n• Scan dependencies + SBOM (Trivy + CodeQL).\n• Auto-deploy to staging on merge to main.\n• Canary 5% with SLO-based auto-rollback (Argo Rollouts).\n• Promote to production when canary is green for 15 min.\n\nThe full diagram is in the Deployment section of the artifact."
+      ]
+    },
+    {
+      "match": ["error", "issue", "bug", "build failing", "fail"],
+      "responses": [
+        "The most common build failures I've seen here:\n\n• Port already in use → kill the prior process or change PORT.\n• JWT verification failing → rotate JWT_PUBLIC_KEY from the secrets manager.\n• Slow DB queries → check the (tenant_id, created_at) composite index.\n\nWant me to open the Common Issues page?"
+      ]
+    },
+    {
+      "match": ["where do i start", "beginner", "start", "new joiner", "first day"],
+      "responses": [
+        "Welcome! Here's the path I'd suggest for your first 2 days:\n\n1. Run the service locally and hit /v1/health.\n2. Read the architecture diagram + glossary.\n3. Trace one request end-to-end in code.\n4. Pick up a ‘good first issue’ — your buddy will review.\n\nOpen the Learning Path page to check items off as you go."
+      ]
+    },
+    {
+      "match": ["architecture", "design", "components"],
+      "responses": [
+        "At a high level: Client → API Gateway → (Identity for auth, this service for domain logic) → Postgres for state, Redis for hot caches, Event Bus for async. The diagram is interactive on the Architecture tab."
+      ]
+    },
+    {
+      "match": ["test", "tests", "testing"],
+      "responses": [
+        "Three layers of tests live here:\n\n• Unit — pure domain logic, fast, runs on every save.\n• Integration — spins up real Postgres + Redis via docker-compose.\n• E2E — black-box against a deployed environment; runs nightly.\n\nUnit + integration must pass to merge."
+      ]
+    },
+    {
+      "match": ["who", "contact", "sme", "owner"],
+      "responses": [
+        "For this repo, your go-to contacts are:\n\n• Priya Mehta — Tech Lead (architecture, k8s)\n• Marco Bianchi — Backend SME (API design, postgres)\n• Devon Carter — DevOps SME (CI/CD, deploys)\n\nSee the Team page for the full escalation matrix."
+      ]
+    }
+  ]
+}
