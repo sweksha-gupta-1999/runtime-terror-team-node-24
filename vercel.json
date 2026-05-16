@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm ci",
+  "installCommand": "npx --yes npm@10.9.4 ci --no-audit --no-fund",
   "buildCommand": "npm run build",
   "outputDirectory": "dist"
 }
